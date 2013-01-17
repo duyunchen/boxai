@@ -3,13 +3,19 @@ package com.boxai;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.widget.TextView;
 
-public class Board extends Activity {
+public class Boxai extends Activity {
 
+	private BoardView boardView;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_board);
+
+        boardView = (BoardView) findViewById(R.id.board);
     }
 
     @Override
