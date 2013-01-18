@@ -18,8 +18,8 @@ import android.view.WindowManager;
 
 public class BoardView extends View {
 
-    private static final int BOARD_WIDTH = 10;
-    private static final int BOARD_HEIGHT = 10;
+    public static final int BOARD_WIDTH = 10;
+    public static final int BOARD_HEIGHT = 10;
 
     public static final int BACKGROUND_TILE = 0;
     public static final int PREY_TILE = 1;

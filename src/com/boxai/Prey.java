@@ -27,11 +27,23 @@ public class Prey implements Entity {
 
     @Override
     public void update() {
-        this.x++;
+        move();
+        // check if out of bounds
+        if (this.x > BoardView.BOARD_WIDTH - 1) {
+            this.x = BoardView.BOARD_WIDTH - 1;
+        } else if (this.x < 0) {
+            this.x = 0;
+        }
+
+        if (this.y > BoardView.BOARD_HEIGHT - 1) {
+            this.y = BoardView.BOARD_HEIGHT - 1;
+        } else if (this.y < 0) {
+            this.y = 0;
+        }
     }
 
     public void move() {
-
+        x++;
     }
 
 }
