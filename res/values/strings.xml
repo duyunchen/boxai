@@ -4,5 +4,7 @@
     <string name="app_name">Boxai</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="load_prey">Load Prey</string>
+    <string name="load_predator">Load Predator</string>
 
 </resources>

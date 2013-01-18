@@ -1,5 +1,7 @@
 package com.boxai;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -18,7 +20,9 @@ public class BoardView extends View {
 
 	private Bitmap[] TILE_BITMAPS = new Bitmap[2];
 
-	private final int TILE_SIZE = 24;
+	private ArrayList<Entity> entities = new ArrayList<Entity>();
+
+	private final int TILE_SIZE = 70;
 
 	public BoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -36,8 +40,8 @@ public class BoardView extends View {
 	public void onDraw(Canvas canvas) {
 		for (int ii = 0; ii < BOARD_WIDTH; ii++) {
 			for (int jj = 0; jj < BOARD_HEIGHT; jj++) {
-				canvas.drawBitmap(TILE_BITMAPS[1], ii * BOARD_WIDTH, jj
-						* BOARD_HEIGHT, mPaint);
+				canvas.drawBitmap(TILE_BITMAPS[1], ii * TILE_SIZE, jj
+						* TILE_SIZE, mPaint);
 			}
 		}
 

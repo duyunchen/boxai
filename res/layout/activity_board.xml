@@ -6,16 +6,16 @@
     <com.boxai.BoardView
       android:id="@+id/board"
       android:layout_width="match_parent"
-      android:layout_height= "match_parent" />
+      android:layout_height= "wrap_content" />
     
     <Button android:id="@+id/prey_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Load Prey" />
+            android:text="@string/load_prey" />
     
     <Button android:id="@+id/predator_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Load Predator" />
+            android:text="@string/load_predator" />
     
 </LinearLayout>
