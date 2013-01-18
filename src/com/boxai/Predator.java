@@ -40,9 +40,10 @@ public class Predator implements Entity {
         } else if (this.y < 0) {
             this.y = 0;
         }
+
     }
 
     public void move() {
-        y++;
+        y--;
     }
 }

@@ -2,7 +2,9 @@ package com.boxai;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -74,7 +76,7 @@ public class BoardView extends View {
 
         TILE_SIZE = this.width / BOARD_WIDTH;
 
-        Entity prey = new Prey(1, 3, PREY_TILE);
+        Entity prey = new Prey(3, 3, PREY_TILE);
         entities.add(prey);
 
         Entity predator = new Predator(9, 9, PREDATOR_TILE);
@@ -104,19 +106,41 @@ public class BoardView extends View {
     public void update() {
         for (Entity entity : entities) {
             entity.update();
-            /*
-             * if (entity.getX() > 9) entity. = 0; else if if (entity.y > 9)
-             * entity.y = 0;
-             */
-
         }
-
-        // check if either prey or predator has gone out of bounds
-        for (int i = 0; i < entities.size(); i++) {
-
+        if (checkWin()) {
+            endGame();
+            return;
         }
-
         refreshHandler.sleep(UPDATE_DELAY);
+    }
+
+    public boolean checkWin() {
+        Prey prey = (Prey) this.entities.get(0);
+        Predator predator = (Predator) this.entities.get(1);
+
+        if (prey.getX() == predator.getX() && prey.getY() == predator.getY()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void endGame() {
+        // stop the timer
+
+        AlertDialog.Builder ad = new AlertDialog.Builder((Boxai) getContext());
+
+        ad.setMessage("Game over.");
+        ad.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        ad.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        ad.create().show();
     }
 
     private void initBoardView(Context context) {
