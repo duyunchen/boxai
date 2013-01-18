@@ -2,67 +2,61 @@ package com.boxai;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Handler;
-import android.os.Message;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 
-public class BoardView extends TileView {
+public class BoardView extends View {
 
-	private static final int TILE = 1;
+	private static final int BOARD_WIDTH = 10;
+	private static final int BOARD_HEIGHT = 10;
+
+	private final Paint mPaint = new Paint();
+
+	private Bitmap[] TILE_BITMAPS = new Bitmap[2];
+
+	private final int TILE_SIZE = 24;
 
 	public BoardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initBoardView(context);
+
+		invalidate();
 	}
 
-	private RefreshHandler mRedrawHandler = new RefreshHandler();
+	public BoardView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		initBoardView(context);
+	}
 
-	class RefreshHandler extends Handler {
-
-		@Override
-		public void handleMessage(Message msg) {
-			BoardView.this.update();
-			BoardView.this.invalidate();
+	@Override
+	public void onDraw(Canvas canvas) {
+		for (int ii = 0; ii < BOARD_WIDTH; ii++) {
+			for (int jj = 0; jj < BOARD_HEIGHT; jj++) {
+				canvas.drawBitmap(TILE_BITMAPS[1], ii * BOARD_WIDTH, jj
+						* BOARD_HEIGHT, mPaint);
+			}
 		}
 
-		public void sleep(long delayMillis) {
-			this.removeMessages(0);
-			sendMessageDelayed(obtainMessage(0), delayMillis);
-		}
-	};
+	}
 
 	private void initBoardView(Context context) {
+		Resources r = this.getResources();
 
-		setFocusable(true);
-
-		Resources r = this.getContext().getResources();
-
-		resetTiles(4);
-
-		loadTile(TILE, r.getDrawable(R.drawable.tile));
-
-		drawBoard();
-		invalidate();
-		/*
-		 * loadTile(RED_STAR, r.getDrawable(R.drawable.redstar));
-		 * loadTile(YELLOW_STAR, r.getDrawable(R.drawable.yellowstar));
-		 * loadTile(GREEN_STAR, r.getDrawable(R.drawable.greenstar));
-		 */
+		this.loadTile(1, r.getDrawable(R.drawable.tile));
 	}
 
-	public void update() {
-		drawBoard();
-	}
+	public void loadTile(int key, Drawable tile) {
+		Bitmap bitmap = Bitmap.createBitmap(TILE_SIZE, TILE_SIZE,
+				Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		tile.setBounds(0, 0, TILE_SIZE, TILE_SIZE);
+		tile.draw(canvas);
 
-	private void drawBoard() {
-		for (int x = 0; x < mXTileCount; x++) {
-			setTile(TILE, x, 0);
-			setTile(TILE, x, mYTileCount - 1);
-		}
-		for (int y = 1; y < mYTileCount - 1; y++) {
-			setTile(TILE, 0, y);
-			setTile(TILE, mXTileCount - 1, y);
-		}
+		TILE_BITMAPS[key] = bitmap;
 	}
 
 }
