@@ -76,10 +76,10 @@ public class BoardView extends View {
 
         TILE_SIZE = this.width / BOARD_WIDTH;
 
-        Entity prey = new Prey(3, 3, PREY_TILE);
+        Entity prey = new BasicPrey(3, 3, PREY_TILE);
         entities.add(prey);
 
-        Entity predator = new Predator(9, 9, PREDATOR_TILE);
+        Entity predator = new BasicPredator(9, 9, PREDATOR_TILE);
         entities.add(predator);
 
         update();
@@ -104,9 +104,14 @@ public class BoardView extends View {
     }
 
     public void update() {
+        Prey prey = (Prey) this.entities.get(0);
+        Predator predator = (Predator) this.entities.get(1);
+        float distance = (float) Math.sqrt((float) (prey.getX() * prey.getX()) + (float) (predator.getY() * predator.getY()));
+
         for (Entity entity : entities) {
-            entity.update();
+            entity.update(distance);
         }
+
         if (checkWin()) {
             endGame();
             return;

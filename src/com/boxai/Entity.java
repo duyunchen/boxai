@@ -7,7 +7,5 @@ public interface Entity {
 
     int getTileIndex();
 
-    void update();
-
-    void move();
+    void update(float enemyDistance);
 }
