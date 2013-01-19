@@ -7,6 +7,14 @@ public abstract class Player implements Entity {
     private float prevEnemyDistance;
     private Action previousAction;
 
+    public Player() {
+        this.x = 0;
+        this.y = 0;
+        this.tileIndex = 0;
+        this.previousAction = Action.WAIT;
+        this.prevEnemyDistance = -1.0f;
+    }
+
     public Player(int x, int y, int tileIndex) {
         this.x = x;
         this.y = y;
@@ -23,6 +31,14 @@ public abstract class Player implements Entity {
     @Override
     public int getY() {
         return this.y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     @Override

@@ -1,10 +1,9 @@
-package com.boxai;
+package com.boxai.example;
+
+import com.boxai.Action;
+import com.boxai.Predator;
 
 public class BasicPredator extends Predator {
-
-    public BasicPredator(int x, int y, int tileIndex) {
-        super(x, y, tileIndex);
-    }
 
     @Override
     public Action move() {

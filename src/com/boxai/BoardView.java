@@ -18,6 +18,9 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.boxai.example.BasicPredator;
+import com.boxai.example.BasicPrey;
+
 public class BoardView extends View {
 
     public static final int BOARD_WIDTH = 10;
@@ -76,10 +79,10 @@ public class BoardView extends View {
 
         TILE_SIZE = this.width / BOARD_WIDTH;
 
-        Entity prey = new BasicPrey(3, 3, PREY_TILE);
+        Entity prey = new BasicPrey();
         entities.add(prey);
 
-        Entity predator = new BasicPredator(9, 9, PREDATOR_TILE);
+        Entity predator = new BasicPredator();
         entities.add(predator);
 
         update();
