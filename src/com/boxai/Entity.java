@@ -5,7 +5,13 @@ public interface Entity {
 
     int getY();
 
+    void setX(int x);
+
+    void setY(int y);
+
     int getTileIndex();
 
-    void update(float enemyDistance);
+    void setTileIndex(int tileIndex);
+
+    void update(double enemyDistance);
 }

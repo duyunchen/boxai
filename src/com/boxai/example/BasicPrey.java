@@ -4,19 +4,24 @@ import com.boxai.Action;
 import com.boxai.Prey;
 
 public class BasicPrey extends Prey {
+    Action prevAction = null;
+    Double prevDistance = null;
+
     @Override
     public Action move() {
-        Action action = this.getPreviousAction();
+        double distance = this.getEnemyDistance();
 
-        float distance = this.getEnemyDistance();
-
-        float prevDistance = this.getPrevEnemyDistance();
-
-        if (prevDistance < 0.0f)
-            return this.getRandomAction();
-        else if (prevDistance <= distance)
-            return this.getRandomAction();
+        Action result;
+        if (prevAction == null) {
+            result = this.getRandomAction();
+        } else if (prevDistance >= distance)
+            result = this.getRandomAction();
         else
-            return action;
+            result = prevAction;
+
+        prevDistance = distance;
+        prevAction = result;
+
+        return result;
     }
 }

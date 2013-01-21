@@ -18,19 +18,19 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.boxai.example.BasicPredator;
-import com.boxai.example.BasicPrey;
+import com.boxai.example.SmartPredator;
+import com.boxai.example.SmartPrey;
 
 public class BoardView extends View {
 
-    public static final int BOARD_WIDTH = 10;
-    public static final int BOARD_HEIGHT = 10;
+    public static final int BOARD_WIDTH = 50;
+    public static final int BOARD_HEIGHT = 75;
 
     public static final int BACKGROUND_TILE = 0;
     public static final int PREY_TILE = 1;
     public static final int PREDATOR_TILE = 2;
 
-    public static int UPDATE_DELAY = 600;
+    public static int UPDATE_DELAY = 20;
 
     private final Paint mPaint = new Paint();
 
@@ -40,7 +40,7 @@ public class BoardView extends View {
 
     private int width, height;
 
-    private int TILE_SIZE = 70;
+    private int TILE_SIZE = 50;
 
     /**
      * Create a simple handler that we can use to cause animation to happen. We
@@ -66,7 +66,6 @@ public class BoardView extends View {
 
     public BoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initBoardView(context);
 
         // get size of the window
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -77,20 +76,37 @@ public class BoardView extends View {
         this.width = size.x;
         this.height = size.y;
 
-        TILE_SIZE = this.width / BOARD_WIDTH;
+        TILE_SIZE = (int) ((double) this.width / (double) BOARD_WIDTH);
 
-        Entity prey = new BasicPrey();
-        entities.add(prey);
-
-        Entity predator = new BasicPredator();
-        entities.add(predator);
-
-        update();
+        initBoardView(context);
+        newGame();
     }
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initBoardView(context);
+    }
+
+    public void newGame() {
+        entities.clear();
+
+        Entity prey = new SmartPrey();
+        prey.setX(random(0, BOARD_WIDTH - 1));
+        prey.setY(random(0, BOARD_HEIGHT - 1));
+        prey.setTileIndex(PREY_TILE);
+        entities.add(prey);
+
+        Entity predator = new SmartPredator();
+        predator.setX(random(0, BOARD_WIDTH - 1));
+        predator.setY(random(0, BOARD_HEIGHT - 1));
+        predator.setTileIndex(PREDATOR_TILE);
+        entities.add(predator);
+
+        update();
+    }
+
+    private int random(int low, int high) {
+        return (int) Math.floor((high - low + 1) * Math.random() + low);
     }
 
     @Override
@@ -109,7 +125,9 @@ public class BoardView extends View {
     public void update() {
         Prey prey = (Prey) this.entities.get(0);
         Predator predator = (Predator) this.entities.get(1);
-        float distance = (float) Math.sqrt((float) (prey.getX() * prey.getX()) + (float) (predator.getY() * predator.getY()));
+        double dx = predator.getX() - prey.getX();
+        double dy = predator.getY() - prey.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
 
         for (Entity entity : entities) {
             entity.update(distance);
@@ -140,11 +158,14 @@ public class BoardView extends View {
         ad.setMessage("Game over.");
         ad.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                BoardView.this.newGame();
             }
         });
         ad.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                System.exit(0);
             }
         });
 

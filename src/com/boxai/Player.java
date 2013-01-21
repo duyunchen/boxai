@@ -3,24 +3,18 @@ package com.boxai;
 public abstract class Player implements Entity {
     private int x, y;
     private int tileIndex;
-    private float enemyDistance;
-    private float prevEnemyDistance;
-    private Action previousAction;
+    private double enemyDistance;
 
     public Player() {
         this.x = 0;
         this.y = 0;
         this.tileIndex = 0;
-        this.previousAction = Action.WAIT;
-        this.prevEnemyDistance = -1.0f;
     }
 
     public Player(int x, int y, int tileIndex) {
         this.x = x;
         this.y = y;
         this.tileIndex = tileIndex;
-        this.previousAction = Action.WAIT;
-        this.prevEnemyDistance = -1.0f;
     }
 
     @Override
@@ -33,12 +27,19 @@ public abstract class Player implements Entity {
         return this.y;
     }
 
+    @Override
     public void setX(int x) {
         this.x = x;
     }
 
+    @Override
     public void setY(int y) {
         this.y = y;
+    }
+
+    @Override
+    public void setTileIndex(int tileIndex) {
+        this.tileIndex = tileIndex;
     }
 
     @Override
@@ -46,23 +47,14 @@ public abstract class Player implements Entity {
         return this.tileIndex;
     }
 
-    public float getEnemyDistance() {
+    public double getEnemyDistance() {
         return this.enemyDistance;
     }
 
-    public float getPrevEnemyDistance() {
-        return this.prevEnemyDistance;
-    }
-
-    public Action getPreviousAction() {
-        return this.previousAction;
-    }
-
     @Override
-    public void update(float enemyDistance) {
+    public void update(double enemyDistance) {
         this.enemyDistance = enemyDistance;
         Action action = this.move();
-        this.previousAction = action;
         switch (action) {
         case NORTH:
             this.y++;
@@ -94,7 +86,6 @@ public abstract class Player implements Entity {
             break;
         }
         this.checkBounds();
-        this.prevEnemyDistance = enemyDistance;
     }
 
     /**
@@ -163,7 +154,7 @@ public abstract class Player implements Entity {
         }
     }
 
-    private int random(int low, int high) {
+    protected final int random(int low, int high) {
         return (int) Math.floor((high - low + 1) * Math.random() + low);
     }
 }

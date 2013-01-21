@@ -6,19 +6,23 @@ import android.graphics.Point;
 
 import com.boxai.Action;
 import com.boxai.BoardView;
-import com.boxai.Predator;
+import com.boxai.Prey;
 
-public class SmartPredator extends Predator {
+public class SmartPrey extends Prey {
     Integer prevX = null;
     Integer prevY = null;
     Action prevAction = null;
     Double prevDistance = null;
     Point prevEnemyLocation = null;
+    int boardWidth;
+    int boardHeight;
 
     @Override
     public Action move() {
         Action result;
         double distance = this.getEnemyDistance();
+        boardWidth = BoardView.BOARD_WIDTH;
+        boardHeight = BoardView.BOARD_HEIGHT;
 
         if (prevAction == null) {
             result = this.getRandomAction();
@@ -35,33 +39,75 @@ public class SmartPredator extends Predator {
         this.prevY = this.getY();
         this.prevAction = result;
         this.prevDistance = distance;
-        return result;
+        int crazyFactor = this.random(0, 100);
+
+        if (crazyFactor >= 100) {
+            return this.getRandomAction();
+        } else {
+            return result;
+        }
     }
 
     private Point computeTarget(Point current, Point enemyPredicted) {
-        ArrayList<Point> candidates = new ArrayList<Point>();
+        final double WALL_TOLERANCE = (boardWidth + boardHeight) / 15.0;
+        final double WALL_WEIGHT = 15.0;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                int newX = current.x + dx;
-                int newY = current.y + dy;
-                if (newX >= 0 && newY >= 0 && newX < BoardView.BOARD_WIDTH && newY < BoardView.BOARD_HEIGHT) {
-                    Point candidate = new Point(current.x + dx, current.y + dy);
-                    candidates.add(candidate);
-                }
+        final double CORNER_TOLERANCE = (boardWidth + boardHeight) / 10.0;
+        final double CORNER_WEIGHT = 30.0;
+
+        final double ENEMY_WEIGHT = 10.0;
+
+        Point leftWall = new Point(0, current.y);
+        Point rightWall = new Point(boardWidth - 1, current.y);
+        Point topWall = new Point(current.x, 0);
+        Point bottomWall = new Point(current.x, boardHeight - 1);
+        Point topLeftCorner = new Point(0, 0);
+        Point topRightCorner = new Point(boardWidth - 1, 0);
+        Point bottomLeftCorner = new Point(0, boardHeight - 1);
+        Point bottomRightCorner = new Point(boardWidth - 1, boardHeight - 1);
+        Vector[] wallForces = { new Vector(leftWall, current), new Vector(rightWall, current), new Vector(topWall, current), new Vector(bottomWall, current), };
+        Vector[] cornerForces = { new Vector(topLeftCorner, current), new Vector(topRightCorner, current), new Vector(bottomLeftCorner, current),
+                new Vector(bottomRightCorner, current) };
+        Vector enemyForce = new Vector(enemyPredicted, current);
+        Vector resultant = new Vector();
+
+        enemyForce.mult(ENEMY_WEIGHT / enemyForce.length());
+        resultant.add(enemyForce);
+
+        for (Vector force : wallForces) {
+            double len = force.length();
+            if (len > 0 && len < WALL_TOLERANCE) {
+                force.mult(WALL_WEIGHT / len);
+                resultant.add(force);
             }
         }
 
-        double smallestDist = Double.POSITIVE_INFINITY;
-        Point target = current;
-
-        for (Point candidate : candidates) {
-            double dist = getDistance(candidate, enemyPredicted);
-            if (dist <= smallestDist) {
-                smallestDist = dist;
-                target = candidate;
+        for (Vector force : cornerForces) {
+            double len = force.length();
+            if (len > 0 && len < CORNER_TOLERANCE) {
+                force.mult(CORNER_WEIGHT / len);
+                resultant.add(force);
             }
         }
+
+        Point target = new Point((int) (current.x + resultant.x), (int) (current.y + resultant.y));
+
+        /*
+         * ArrayList<Point> candidates = new ArrayList<Point>();
+         * 
+         * for (int dx = -1; dx <= 1; dx++) { for (int dy = -1; dy <= 1; dy++) {
+         * int newX = current.x + dx; int newY = current.y + dy; if (newX >= 0
+         * && newY >= 0 && newX < BoardView.BOARD_WIDTH && newY <
+         * BoardView.BOARD_HEIGHT) { Point candidate = new Point(current.x + dx,
+         * current.y + dy); candidates.add(candidate); } } }
+         * 
+         * double largestDist = Double.NEGATIVE_INFINITY; Point target =
+         * current;
+         * 
+         * for (Point candidate : candidates) { double dist =
+         * getDistance(candidate, enemyPredicted); if (dist >= largestDist) {
+         * largestDist = dist; target = candidate; } }
+         */
         return target;
     }
 
@@ -159,5 +205,34 @@ public class SmartPredator extends Predator {
         int dy = Math.abs(a.y - b.y);
 
         return dx <= 1 && dy <= 1;
+    }
+
+    class Vector {
+        double x, y;
+
+        public Vector() {
+            this.x = 0;
+            this.y = 0;
+
+        }
+
+        public Vector(Point start, Point end) {
+            this.x = end.x - start.x;
+            this.y = end.y - start.y;
+        }
+
+        public void add(Vector that) {
+            this.x += that.x;
+            this.y += that.y;
+        }
+
+        public void mult(double d) {
+            this.x *= d;
+            this.y *= d;
+        }
+
+        public double length() {
+            return Math.sqrt(x * x + y * y);
+        }
     }
 }
